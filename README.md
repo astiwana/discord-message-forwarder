@@ -6,8 +6,16 @@ This selfbot enables seamless communication between two Discord servers using an
 
 1. First, fork this repository and clone it to your computer.
 2. Navigate to the directory and install the required packages:
-##
-<tab><tab>code/npm install discord.js-selfbot-v13 dotenv express
+
+   ```bash
+   npm install discord.js-selfbot-v13 dotenv express
+   ```
+3. Add in your token, user ID, target channel(s), destination channel(s), and the server ID of the target channel(s).
+4. Execute the selfbot:
+
+   ```bash
+   node forwarder.js
+   ```
 
 ## Contributing
 
