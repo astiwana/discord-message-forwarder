@@ -24,7 +24,9 @@ const channelMapping = {
 const reverseChannelMapping = Object.fromEntries(
     Object.entries(channelMapping).map(([target, destination]) => [destination, target])
 );
-  
+
+const botUserId = client.user.id; // Your user ID
+
 client.on('ready', () => {
   console.log(`🤖 Bot is online! Logged in as ${client.user.tag}`);
 
@@ -32,6 +34,9 @@ client.on('ready', () => {
 });
 
 client.on('messageCreate', async (message) => {
+    // Ignore messages from the bot itself
+    if (message.author.id === botUserId) return;
+
     // Check if message is from a target channel
     if (message.guild && message.guild.id === serverId && channelMapping[message.channel.id]) {
       const content = message.content;
