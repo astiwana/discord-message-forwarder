@@ -20,6 +20,11 @@ const channelMapping = {
     // Add more channels here if needed
   };
 
+// Create reverse mapping (destination channels -> target channels)
+const reverseChannelMapping = Object.fromEntries(
+    Object.entries(channelMapping).map(([target, destination]) => [destination, target])
+);
+  
 client.on('ready', () => {
   console.log(`🤖 Bot is online! Logged in as ${client.user.tag}`);
 
@@ -27,6 +32,7 @@ client.on('ready', () => {
 });
 
 client.on('messageCreate', async (message) => {
+    // Check if message is from a target channel
     if (message.guild && message.guild.id === serverId && channelMapping[message.channel.id]) {
       const content = message.content;
       const replyMessage = message.reference ? await message.channel.messages.fetch(message.reference.messageId) : null;
@@ -45,6 +51,25 @@ client.on('messageCreate', async (message) => {
         destinationChannel.send(messageContent);
       } else {
         console.error(`Destination channel not found for channel ID: ${message.channel.id}`);
+      }
+    }
+  
+    // Check if message is from a destination channel
+    if (reverseChannelMapping[message.channel.id]) {
+      const content = message.content;
+      const replyMessage = message.reference ? await message.channel.messages.fetch(message.reference.messageId) : null;
+      const replyContent = replyMessage ? `\n\n🔗 **In reply to ${replyMessage.author.username}:**\n${replyMessage.content}\n======` : '';
+  
+      let messageContent = `${content}${replyContent}`;
+  
+      // Fetch the target channel based on the reverse mapping
+      const targetChannelId = reverseChannelMapping[message.channel.id];
+      const targetChannel = await client.channels.fetch(targetChannelId);
+  
+      if (targetChannel) {
+        targetChannel.send(messageContent);
+      } else {
+        console.error(`Target channel not found for channel ID: ${message.channel.id}`);
       }
     }
   });
